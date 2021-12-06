@@ -9,7 +9,6 @@ const Login = () => {
   });
   const onSignIn = () => {
     const {email, password, name} = registerForm;
-    console.log(email, password, name);
     auth()
       .signInWithEmailAndPassword(email, password)
       .then(result => {

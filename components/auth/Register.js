@@ -11,7 +11,6 @@ const Register = () => {
   });
   const onSignUp = () => {
     const {email, password, name} = registerForm;
-    console.log(email, password, name);
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then(result => {

@@ -1,12 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import auth from '@react-native-firebase/auth';
+import {Provider} from 'react-redux';
 
 import LandingScreen from './components/auth/Landing';
 import RegisterScreen from './components/auth/Register';
 import LoginScreen from './components/auth/Login';
+import MainScreen from './components/Main';
+
+import store from './redux/store.js';
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -47,17 +51,9 @@ const App = () => {
     );
   }
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
-      <Text>User is logged in</Text>
-      <Button
-        title="Sign out"
-        onPress={() =>
-          auth()
-            .signOut()
-            .then(() => console.log('User signed out'))
-        }
-      />
-    </View>
+    <Provider store={store}>
+      <MainScreen />
+    </Provider>
   );
 };
 
