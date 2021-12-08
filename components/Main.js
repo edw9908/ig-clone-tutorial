@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {fetchUser} from '../redux/actions';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import FeedScreen from './main/Feed';
 import ProfileScreen from './main/Profile';
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 const EmptyScreen = () => {
   return null;
@@ -22,7 +22,7 @@ const Main = () => {
   }, []);
 
   return (
-    <Tab.Navigator initialRouteName="Feed">
+    <Tab.Navigator initialRouteName="Feed" labeled={false}>
       <Tab.Screen
         name="Feed"
         component={FeedScreen}
