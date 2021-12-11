@@ -1,20 +1,24 @@
-import React from 'react';
-import {View, StyleSheet, Button} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Button, Text, Image} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {useCamera} from 'react-native-camera-hooks';
 import RNFS from 'react-native-fs';
 
 const Add = () => {
-  const [{cameraRef}, {takePicture}] = useCamera(null);
+  const [{cameraRef, type}, {takePicture, toggleFacing}] = useCamera(null);
+  const [image, setImage] = useState(null);
 
   const captureHandle = async () => {
     try {
       const data = await takePicture();
       console.log(data.uri);
       const filePath = data.uri;
-      const newFilePath = RNFS.ExternalDirectoryPath + '/MyTest.jpg';
+      const date = new Date();
+      const newFilePath =
+        RNFS.ExternalDirectoryPath + '/' + date.toISOString() + '.jpg';
       RNFS.moveFile(filePath, newFilePath)
         .then(() => {
+          setImage('file://' + newFilePath);
           console.log('IMAGE MOVED');
         })
         .catch(error => {
@@ -25,14 +29,27 @@ const Add = () => {
     }
   };
 
+  const Unauthorized = () => {
+    return (
+      <View style={styles.centeredContainer}>
+        <Text style={styles.text}>Camera Not Authorized</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.body}>
-      <RNCamera
-        ref={cameraRef}
-        type={RNCamera.Constants.Type.back}
-        style={styles.preview}>
-        <Button title="Captura" onPress={() => captureHandle()} />
-      </RNCamera>
+      <View style={styles.cameraContainer}>
+        <RNCamera
+          ref={cameraRef}
+          style={styles.fixedRatio}
+          type={type}
+          notAuthorizedView={<Unauthorized />}
+        />
+      </View>
+      <Button title="Flip Image" onPress={toggleFacing} />
+      <Button title="Take Picture" onPress={captureHandle} />
+      {image && <Image source={{uri: image}} style={styles.body} />}
     </View>
   );
 };
@@ -41,10 +58,21 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
   },
-  preview: {
+  cameraContainer: {
     flex: 1,
+    flexDirection: 'row',
+  },
+  fixedRatio: {
+    flex: 1,
+    aspectRatio: 1,
+  },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+  },
+  text: {
+    color: 'black',
   },
 });
 
