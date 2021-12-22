@@ -12,6 +12,7 @@ import MainScreen from './components/Main';
 import AddScreen from './components/main/Add';
 
 import store from './redux/store.js';
+import SaveScreen from './components/main/Save';
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -61,6 +62,7 @@ const App = () => {
             options={{headerShown: false}}
           />
           <Stack.Screen name="Add" component={AddScreen} />
+          <Stack.Screen name="Save" component={SaveScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

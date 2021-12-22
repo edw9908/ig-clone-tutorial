@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, Button, Text, Image} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {useCamera} from 'react-native-camera-hooks';
-import RNFS from 'react-native-fs';
+import ImageCropPicker from 'react-native-image-crop-picker';
+// import RNFS from 'react-native-fs';
 
-const Add = () => {
+const Add = ({navigation}) => {
   const [{cameraRef, type}, {takePicture, toggleFacing}] = useCamera(null);
   const [image, setImage] = useState(null);
 
@@ -13,20 +14,31 @@ const Add = () => {
       const data = await takePicture();
       console.log(data.uri);
       const filePath = data.uri;
-      const date = new Date();
-      const newFilePath =
-        RNFS.ExternalDirectoryPath + '/' + date.toISOString() + '.jpg';
-      RNFS.moveFile(filePath, newFilePath)
-        .then(() => {
-          setImage('file://' + newFilePath);
-          console.log('IMAGE MOVED');
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      setImage(filePath);
+      // const date = new Date();
+      // const newFilePath =
+      //   RNFS.ExternalDirectoryPath + '/' + date.toISOString() + '.jpg';
+      // RNFS.moveFile(filePath, newFilePath)
+      //   .then(() => {
+      //     setImage('file://' + newFilePath);
+      //     console.log('IMAGE MOVED');
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const openLibrary = () => {
+    ImageCropPicker.openPicker({cropping: true, mediaType: 'photo'})
+      .then(imageResult => {
+        setImage(imageResult.path);
+      })
+      .catch(error => {
+        console.log('error imagen', error);
+      });
   };
 
   const Unauthorized = () => {
@@ -49,6 +61,13 @@ const Add = () => {
       </View>
       <Button title="Flip Image" onPress={toggleFacing} />
       <Button title="Take Picture" onPress={captureHandle} />
+      <Button title="Pick Image From Gallery" onPress={openLibrary} />
+      {image && (
+        <Button
+          title="Save"
+          onPress={() => navigation.navigate('Save', {image})}
+        />
+      )}
       {image && <Image source={{uri: image}} style={styles.body} />}
     </View>
   );
